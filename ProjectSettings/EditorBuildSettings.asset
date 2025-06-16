@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MidRange.unity
     guid: 523d28308054c3840b94ef55e1c69304
   - enabled: 1
-    path: Assets/Scenes/LongRange.unity
+    path: Assets/Scenes/AdvancedRange.unity
     guid: 553360160c94cfe4a924f1959fd3462c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
