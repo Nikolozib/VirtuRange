@@ -1,8 +1,10 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class TargetSpawn : MonoBehaviour
 {
+
     public Vector3 minBounds;
     public Vector3 maxBounds;
     public float minRespawnTime = 1f;
@@ -12,17 +14,34 @@ public class TargetSpawn : MonoBehaviour
     {
         Debug.Log("TargetSpawn.Hit() called!");
         float respawnTime = Random.Range(minRespawnTime, maxRespawnTime);
-        Invoke(nameof(Respawn), respawnTime); // This still works even if GameObject is inactive
+        Invoke(nameof(Respawn), respawnTime);
         gameObject.SetActive(false);
     }
 
     private void Respawn()
     {
-        Debug.Log("TargetSpawn.Respawn() called!");
+        string sceneName = SceneManager.GetActiveScene().name;
+        float zPosition;
+
+        if (sceneName == "CloseRange")
+        {
+            zPosition = 15f;
+        }
+        else if (sceneName == "MidRange")
+        {
+            zPosition = 30f;
+        }
+        else
+        {
+            zPosition = 15f;
+        }
+
+        Debug.Log($"Respawning in scene {sceneName} at z = {zPosition}");
+
         Vector3 randomPosition = new Vector3(
             Random.Range(minBounds.x, maxBounds.x),
             Random.Range(minBounds.y, maxBounds.y),
-            15f
+            zPosition
         );
 
         transform.position = randomPosition;
