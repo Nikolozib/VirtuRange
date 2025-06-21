@@ -7,6 +7,7 @@ public class TeleportationChooser : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Time.timeScale = 1f;
             Debug.Log("Player entered teleportation area: off to DifficultyChooser scene");
             SceneManager.LoadScene("DifficultyChooser");
         }

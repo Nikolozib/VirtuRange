@@ -5,6 +5,7 @@ public class MainMenuButtonController : MonoBehaviour
 {
     public void PlayGame()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("StartRoom");
     }
 
@@ -12,5 +13,11 @@ public class MainMenuButtonController : MonoBehaviour
     {
         Debug.Log("Quit Game");
         Application.Quit();
+    }
+
+    public void ChangeCrossairColor()
+    {
+
+        Debug.Log("Change Crosshair Color");
     }
 }

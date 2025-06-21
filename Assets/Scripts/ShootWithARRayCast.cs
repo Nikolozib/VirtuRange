@@ -22,25 +22,29 @@ public class ShootWithARRayCast : MonoBehaviour
 
     void Update()
     {
-        if (isReloading)
-            return;
-
-        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
+        if (!PauseMenu.isPaused)
         {
-            StartCoroutine(Reload());
-            return;
+            if (isReloading)
+                return;
+
+            if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
+            {
+                StartCoroutine(Reload());
+                return;
+            }
+
+            if (Input.GetKey(KeyCode.Mouse0) && ableToShoot && currentAmmo > 0)
+            {
+                StartCoroutine(ShootDelay());
+            }
+
+            if (currentAmmo == 0 && !isReloading)
+            {
+                Debug.Log("Out of ammo!");
+                StartCoroutine(Reload());
+            }
         }
 
-        if (Input.GetKey(KeyCode.Mouse0) && ableToShoot && currentAmmo > 0)
-        {
-            StartCoroutine(ShootDelay());
-        }
-
-        if (currentAmmo == 0 && !isReloading)
-        {
-            Debug.Log("Out of ammo!");
-            StartCoroutine(Reload());
-        }
     }
 
     private IEnumerator ShootDelay()
