@@ -7,70 +7,103 @@ public class TargetSpawn : MonoBehaviour
     public Vector3 maxBounds;
     public float minRespawnTime = 1f;
     public float maxRespawnTime = 3f;
+    public float moveSpeed = 3f;
 
-    // 🔁 Movement settings
-    public bool enableMovement = true;
-    public float moveXDistance = 2f;
-    public float moveYDistance = 1f;
-    public float moveSpeed = 2f;
+    public SingleTargetSpawner spawner;  // Assigned by spawner when instantiated
 
-    private Vector3 startPosition;
-    private float timeOffset;
-    private bool shouldMove = false;
+    private Vector3 targetPosition;
+    private bool allowSpawning = true;
+    private float spawnTime;
 
     void Start()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        shouldMove = sceneName == "AdvancedRange"; // only move in this scene
-
-        startPosition = transform.position;
-        timeOffset = Random.Range(0f, 100f); // vary movement between targets
+        spawnTime = Time.time;
+        PickNewTargetPosition();
     }
 
     void Update()
     {
-        if (shouldMove && enableMovement)
-        {
-            float xOffset = Mathf.Sin((Time.time + timeOffset) * moveSpeed) * moveXDistance;
-            float yOffset = Mathf.Cos((Time.time + timeOffset) * moveSpeed) * moveYDistance;
+        if (!allowSpawning) return;
 
-            transform.position = startPosition + new Vector3(xOffset, yOffset, 0f);
+        MoveTowardsTargetPosition();
+    }
+
+    private void MoveTowardsTargetPosition()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            PickNewTargetPosition();
         }
+    }
+
+    private void PickNewTargetPosition()
+    {
+        float x = Random.Range(minBounds.x, maxBounds.x);
+        float y = Random.Range(minBounds.y, maxBounds.y);
+        float z = Random.Range(minBounds.z, maxBounds.z);
+        targetPosition = new Vector3(x, y, z);
     }
 
     public void Hit()
     {
-        Debug.Log("TargetSpawn.Hit() called!");
-        float respawnTime = Random.Range(minRespawnTime, maxRespawnTime);
-        Invoke(nameof(Respawn), respawnTime);
+        if (!allowSpawning) return;
+
+        float reactionTime = Time.time - spawnTime;
+
+        var manager = FindObjectOfType<TargetSessionManager>();
+        if (manager != null)
+        {
+            manager.RegisterHit(reactionTime);
+        }
+
+        allowSpawning = false;
+        gameObject.SetActive(false);
+
+        if (spawner != null)
+            spawner.NotifyTargetHit();
+        else
+            Debug.LogWarning("Spawner reference missing!");
+    }
+
+    public void Respawn()
+    {
+        if (!allowSpawning) return;
+
+        // Reset position immediately on respawn
+        float zPos = 30f; // Default z-position
+
+        string scene = SceneManager.GetActiveScene().name;
+        if (scene == "CloseRange") zPos = 15f;
+
+        Vector3 spawnPos = new Vector3(
+            Random.Range(minBounds.x, maxBounds.x),
+            Random.Range(minBounds.y, maxBounds.y),
+            zPos
+        );
+
+        transform.position = spawnPos;
+        spawnTime = Time.time;
+        allowSpawning = true;
+        gameObject.SetActive(true);
+
+        PickNewTargetPosition();
+    }
+
+    public void StopSpawning()
+    {
+        allowSpawning = false;
+        CancelInvoke();
         gameObject.SetActive(false);
     }
 
-    private void Respawn()
+    public void AllowRespawning(bool allow)
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        float zPosition;
+        allowSpawning = allow;
+    }
 
-        if (sceneName == "CloseRange")
-            zPosition = 15f;
-        else if (sceneName == "MidRange")
-            zPosition = 30f;
-        else if (sceneName == "AdvancedRange")
-            zPosition = 30f;
-        else
-        {
-            Debug.LogWarning($"Unknown scene '{sceneName}', using default z position.");
-            zPosition = 30f;
-        }
-
-        Vector3 randomPosition = new Vector3(
-            Random.Range(minBounds.x, maxBounds.x),
-            Random.Range(minBounds.y, maxBounds.y),
-            zPosition
-        );
-
-        transform.position = randomPosition;
-        startPosition = transform.position; // reset base point for next movement
-        gameObject.SetActive(true);
+    public void ResetSpawnTime()
+    {
+        spawnTime = Time.time;
     }
 }
