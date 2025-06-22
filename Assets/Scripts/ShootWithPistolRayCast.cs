@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class ShootWithARRayCast : MonoBehaviour
+public class ShootWithPistolRayCast : MonoBehaviour
 {
-    public float shootDistance = 40f;
-    public float shootDelay = 0.3f;
-    public int maxAmmo = 30;
-    public float reloadTime = 2f;
+    public float shootDistance = 35f;
+    public float shootDelay = 0.7f;
+    public int maxAmmo = 10;
+    public float reloadTime = 3f;
     public LayerMask hitMask;
     public GameObject bulletPrefab;
     public float bulletSpeed = 200f;
