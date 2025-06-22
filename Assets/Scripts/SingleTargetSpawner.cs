@@ -22,23 +22,21 @@ public class SingleTargetSpawner : MonoBehaviour
         if (!hasStarted && Input.GetKeyDown(KeyCode.P))
         {
             hasStarted = true;
+            sessionManager?.StartSession();
             SpawnTarget();
-
-            if (sessionManager != null)
-            {
-                sessionManager.StartSession();
-            }
         }
     }
 
     public void SpawnTarget()
     {
+        if (sessionManager == null || !sessionManager.IsSessionActive()) return;
+
         if (targetPrefab == null)
         {
             Debug.LogError("Target prefab not assigned!");
             return;
         }
-        
+
         if (currentTarget != null)
             Destroy(currentTarget);
 
@@ -57,13 +55,28 @@ public class SingleTargetSpawner : MonoBehaviour
             ts.maxBounds = maxBounds;
             ts.minRespawnTime = minRespawnTime;
             ts.maxRespawnTime = maxRespawnTime;
-            ts.spawner = this; 
+            ts.spawner = this;
         }
     }
 
     public void NotifyTargetHit()
     {
+        if (sessionManager == null || !sessionManager.IsSessionActive()) return;
+
         float delay = Random.Range(minRespawnTime, maxRespawnTime);
         Invoke(nameof(SpawnTarget), delay);
+    }
+
+    public void ResetSpawner()
+    {
+        hasStarted = true;  // mark started so it spawns immediately on reset
+
+        if (currentTarget != null)
+        {
+            Destroy(currentTarget);
+            currentTarget = null;
+        }
+
+        SpawnTarget();
     }
 }

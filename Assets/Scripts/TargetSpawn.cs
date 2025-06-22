@@ -9,22 +9,25 @@ public class TargetSpawn : MonoBehaviour
     public float maxRespawnTime = 3f;
     public float moveSpeed = 3f;
 
-    public SingleTargetSpawner spawner;  // Assigned by spawner when instantiated
+    public SingleTargetSpawner spawner;
 
     private Vector3 targetPosition;
     private bool allowSpawning = true;
     private float spawnTime;
+    private bool enableMovement = false;
+    private TargetSessionManager sessionManager;
 
     void Start()
     {
         spawnTime = Time.time;
+        enableMovement = SceneManager.GetActiveScene().name == "AdvancedRange";
         PickNewTargetPosition();
+        sessionManager = FindObjectOfType<TargetSessionManager>();
     }
 
     void Update()
     {
-        if (!allowSpawning) return;
-
+        if (!allowSpawning || !enableMovement) return;
         MoveTowardsTargetPosition();
     }
 
@@ -47,34 +50,24 @@ public class TargetSpawn : MonoBehaviour
 
     public void Hit()
     {
-        if (!allowSpawning) return;
+        if (!allowSpawning || sessionManager == null || !sessionManager.IsSessionActive()) return;
 
         float reactionTime = Time.time - spawnTime;
-
-        var manager = FindObjectOfType<TargetSessionManager>();
-        if (manager != null)
-        {
-            manager.RegisterHit(reactionTime);
-        }
+        sessionManager.RegisterHit(reactionTime);
 
         allowSpawning = false;
         gameObject.SetActive(false);
 
         if (spawner != null)
             spawner.NotifyTargetHit();
-        else
-            Debug.LogWarning("Spawner reference missing!");
     }
 
     public void Respawn()
     {
-        if (!allowSpawning) return;
-
-        // Reset position immediately on respawn
-        float zPos = 30f; // Default z-position
+        if (sessionManager == null || !sessionManager.IsSessionActive()) return;
 
         string scene = SceneManager.GetActiveScene().name;
-        if (scene == "CloseRange") zPos = 15f;
+        float zPos = scene == "CloseRange" ? 15f : 30f;
 
         Vector3 spawnPos = new Vector3(
             Random.Range(minBounds.x, maxBounds.x),
