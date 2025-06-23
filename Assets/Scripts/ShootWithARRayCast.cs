@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ShootWithARRayCast : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class ShootWithARRayCast : MonoBehaviour
 
     void Update()
     {
-        if (!PauseMenu.isPaused && gameObject.activeInHierarchy)
+        if (!PauseMenu.isPaused && gameObject.activeInHierarchy && SceneManager.GetActiveScene().name != "StartRoom")
         {
             if (isReloading) return;
 
