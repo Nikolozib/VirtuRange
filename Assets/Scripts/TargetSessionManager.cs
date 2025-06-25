@@ -1,22 +1,32 @@
-using System.Collections.Generic;
+// TargetSessionManager.cs
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 public class TargetSessionManager : MonoBehaviour
 {
     public float sessionDuration = 60f;
     public TMP_Text timerText;
     public TMP_Text resultText;
+    public TMP_Text recordText;
 
     private float timer;
     private bool sessionActive = false;
     private List<float> reactionTimes = new List<float>();
     private int targetsHit = 0;
+    private float totalDowntime = 0f;
+    private float sessionStartTime;
 
     private void Start()
     {
         timerText.text = "Time: " + Mathf.CeilToInt(sessionDuration).ToString();
         resultText.text = "";
+
+        if (PlayerPrefs.HasKey("BestAvgReaction"))
+        {
+            float best = PlayerPrefs.GetFloat("BestAvgReaction");
+            recordText.text = "Record: " + best.ToString("F3") + "s";
+        }
     }
 
     private void Update()
@@ -47,6 +57,12 @@ public class TargetSessionManager : MonoBehaviour
         targetsHit++;
     }
 
+    public void RegisterTargetSpawned()
+    {
+        if (!sessionActive) return;
+        totalDowntime += Random.Range(1f, 3f); // assume average spawn delay used in your ranges
+    }
+
     private void EndSession()
     {
         sessionActive = false;
@@ -57,11 +73,19 @@ public class TargetSessionManager : MonoBehaviour
             target.StopSpawning();
         }
 
-        float avgReaction = reactionTimes.Count > 0
-            ? Mathf.Round((Sum(reactionTimes) / reactionTimes.Count) * 1000f) / 1000f
-            : 0f;
+        float netTime = sessionDuration - totalDowntime;
+        float avgReaction = (targetsHit > 0) ? Mathf.Round((netTime / targetsHit) * 1000f) / 1000f : 0f;
 
         resultText.text = $"Hits: {targetsHit}\nAvg Reaction: {avgReaction}s\nPress E to Restart";
+
+        float best = PlayerPrefs.GetFloat("BestAvgReaction", float.MaxValue);
+        if (avgReaction > 0f && avgReaction < best)
+        {
+            PlayerPrefs.SetFloat("BestAvgReaction", avgReaction);
+            PlayerPrefs.Save();
+            recordText.text = "Record: " + avgReaction.ToString("F3") + "s";
+        }
+
         Debug.Log("Session ended.");
     }
 
@@ -73,6 +97,8 @@ public class TargetSessionManager : MonoBehaviour
 
         reactionTimes.Clear();
         targetsHit = 0;
+        totalDowntime = 0f;
+
         timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
 
         TargetSpawn[] allTargets = FindObjectsOfType<TargetSpawn>();
@@ -86,18 +112,10 @@ public class TargetSessionManager : MonoBehaviour
         SingleTargetSpawner spawner = FindObjectOfType<SingleTargetSpawner>();
         if (spawner != null)
         {
-            spawner.ResetSpawner();  // Spawn target immediately after reset
+            spawner.ResetSpawner();
         }
 
         Debug.Log("Session restarted.");
-    }
-
-    private float Sum(List<float> values)
-    {
-        float total = 0f;
-        foreach (float v in values)
-            total += v;
-        return total;
     }
 
     public void StartSession()
@@ -105,8 +123,11 @@ public class TargetSessionManager : MonoBehaviour
         timer = sessionDuration;
         sessionActive = true;
         resultText.text = "";
+
         reactionTimes.Clear();
         targetsHit = 0;
+        totalDowntime = 0f;
+
         timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
     }
 

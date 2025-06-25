@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class ShootWithPistolRayCast : MonoBehaviour
+public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
 {
     public float shootDistance = 35f;
     public float shootDelay = 0.7f;
@@ -25,7 +25,13 @@ public class ShootWithPistolRayCast : MonoBehaviour
     {
         ableToShoot = true;
         isReloading = false;
+        WeaponUIManager.instance?.UpdateUI(this);
     }
+    private void OnDisable()
+    {
+        WeaponUIManager.instance?.HideAmmo();
+    }
+
 
     void Update()
     {
@@ -46,7 +52,6 @@ public class ShootWithPistolRayCast : MonoBehaviour
 
             if (currentAmmo == 0 && !isReloading)
             {
-                Debug.Log("Out of ammo!");
                 StartCoroutine(Reload());
             }
         }
@@ -58,69 +63,46 @@ public class ShootWithPistolRayCast : MonoBehaviour
         FireBullet();
         ShootRaycast();
         currentAmmo--;
-        Debug.Log("Current Ammo: " + currentAmmo);
+        WeaponUIManager.instance?.UpdateUI(this);
         yield return new WaitForSeconds(shootDelay);
         ableToShoot = true;
-    }
-
-    private void ShootRaycast()
-    {
-        Camera cam = Camera.main;
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        RaycastHit[] hits = Physics.RaycastAll(ray, shootDistance, hitMask);
-
-        foreach (var hit in hits)
-        {
-            Debug.Log("Hit Object: " + hit.transform.name);
-            var targetScript = hit.transform.GetComponent<TargetSpawn>();
-            if (targetScript != null)
-            {
-                targetScript.Hit();
-            }
-        }
-
-        Debug.DrawRay(transform.position, transform.forward * shootDistance, Color.red, 1f);
     }
 
     private IEnumerator Reload()
     {
         isReloading = true;
-        Debug.Log("Reloading...");
+        WeaponUIManager.instance?.ShowReloading();
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
-        Debug.Log("Reloaded");
+        WeaponUIManager.instance?.HideReloading();
+        WeaponUIManager.instance?.UpdateUI(this);
+    }
+
+
+    private void ShootRaycast()
+    {
+        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, shootDistance, hitMask))
+        {
+            hit.collider.GetComponent<TargetSpawn>()?.Hit();
+        }
     }
 
     private void FireBullet()
     {
-        if (bulletPrefab == null)
-        {
-            Debug.LogWarning("Bullet prefab not assigned.");
-            return;
-        }
+        if (!bulletPrefab) return;
 
-        Camera cam = Camera.main;
-        Vector3 rayOrigin = cam.transform.position;
-        Vector3 rayDirection = cam.transform.forward;
-        Vector3 spawnPos = rayOrigin + rayDirection * 1f;
-        Quaternion bulletRotation = Quaternion.LookRotation(rayDirection);
-
-        GameObject bullet = Instantiate(bulletPrefab, spawnPos, bulletRotation);
-
-        Collider bulletCollider = bullet.GetComponent<Collider>();
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (bulletCollider != null && playerObj != null)
-        {
-            Collider playerCollider = playerObj.GetComponent<Collider>();
-            if (playerCollider != null)
-                Physics.IgnoreCollision(bulletCollider, playerCollider);
-        }
-
+        Vector3 spawnPos = Camera.main.transform.position + Camera.main.transform.forward * 1f;
+        GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.LookRotation(Camera.main.transform.forward));
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         if (rb != null)
-            rb.linearVelocity = rayDirection * bulletSpeed;
-
-        Debug.DrawRay(spawnPos, rayDirection * shootDistance, Color.yellow, 1f);
+            rb.linearVelocity = Camera.main.transform.forward * bulletSpeed;
     }
+
+    // IWeapon interface implementation
+    public string GetWeaponName() => "Pistol";
+    public int GetCurrentAmmo() => currentAmmo;
+    public int GetMaxAmmo() => maxAmmo;
+    public void ResetAmmo() => currentAmmo = maxAmmo;
 }

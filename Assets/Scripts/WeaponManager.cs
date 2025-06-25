@@ -10,7 +10,6 @@ public class WeaponManager : MonoBehaviour
 
     private void Awake()
     {
-        // Ensure only one instance exists
         if (instance != null)
         {
             Destroy(gameObject);
@@ -18,19 +17,13 @@ public class WeaponManager : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject); // Keep across scenes
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void Start()
     {
-        SetWeapon(arWeapon, pistolWeapon); // Start with AR
-
-        if (SceneManager.GetActiveScene().name != "StartRoom")
-        {
-            Debug.Log("Hiding both weapons for safety...");
-            arWeapon.SetActive(false);
-            pistolWeapon.SetActive(false);
-        }
+        SetWeapon(arWeapon, pistolWeapon);
     }
 
     void Update()
@@ -49,7 +42,31 @@ public class WeaponManager : MonoBehaviour
 
     private void SetWeapon(GameObject enableObj, GameObject disableObj)
     {
+        if (enableObj == null || disableObj == null) return;
+
         enableObj.SetActive(true);
         disableObj.SetActive(false);
+
+        IWeapon weaponScript = enableObj.GetComponent<IWeapon>();
+        if (weaponScript != null)
+        {
+            WeaponUIManager.instance?.UpdateUI(weaponScript);
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "StartRoom")
+        {
+            arWeapon.SetActive(false);
+            pistolWeapon.SetActive(false);
+            return;
+        }
+
+        // Reset ammo when entering new scene
+        arWeapon?.GetComponent<IWeapon>()?.ResetAmmo();
+        pistolWeapon?.GetComponent<IWeapon>()?.ResetAmmo();
+
+        SetWeapon(arWeapon, pistolWeapon);
     }
 }
