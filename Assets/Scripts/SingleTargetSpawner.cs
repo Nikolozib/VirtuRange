@@ -57,6 +57,8 @@ public class SingleTargetSpawner : MonoBehaviour
             ts.maxRespawnTime = maxRespawnTime;
             ts.spawner = this;
         }
+
+        sessionManager?.RegisterTargetSpawned(); // <-- Register respawn time
     }
 
     public void NotifyTargetHit()
@@ -69,7 +71,7 @@ public class SingleTargetSpawner : MonoBehaviour
 
     public void ResetSpawner()
     {
-        hasStarted = true;  // mark started so it spawns immediately on reset
+        hasStarted = true;
 
         if (currentTarget != null)
         {

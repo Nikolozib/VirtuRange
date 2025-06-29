@@ -1,4 +1,3 @@
-// TargetSessionManager.cs
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ public class TargetSessionManager : MonoBehaviour
     private List<float> reactionTimes = new List<float>();
     private int targetsHit = 0;
     private float totalDowntime = 0f;
-    private float sessionStartTime;
+    private float activePlayTime = 0f;
 
     private void Start()
     {
@@ -40,8 +39,12 @@ public class TargetSessionManager : MonoBehaviour
             return;
         }
 
-        timer -= Time.deltaTime;
-        timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+        if (!PauseMenu.isPaused)
+        {
+            timer -= Time.deltaTime;
+            activePlayTime += Time.deltaTime;
+            timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+        }
 
         if (timer <= 0f)
         {
@@ -60,7 +63,8 @@ public class TargetSessionManager : MonoBehaviour
     public void RegisterTargetSpawned()
     {
         if (!sessionActive) return;
-        totalDowntime += Random.Range(1f, 3f); // assume average spawn delay used in your ranges
+
+        totalDowntime += Random.Range(1f, 3f); // average estimated downtime
     }
 
     private void EndSession()
@@ -73,8 +77,8 @@ public class TargetSessionManager : MonoBehaviour
             target.StopSpawning();
         }
 
-        float netTime = sessionDuration - totalDowntime;
-        float avgReaction = (targetsHit > 0) ? Mathf.Round((netTime / targetsHit) * 1000f) / 1000f : 0f;
+        float netActiveTime = activePlayTime - totalDowntime;
+        float avgReaction = (targetsHit > 0) ? Mathf.Round((netActiveTime / targetsHit) * 1000f) / 1000f : 0f;
 
         resultText.text = $"Hits: {targetsHit}\nAvg Reaction: {avgReaction}s\nPress E to Restart";
 
@@ -98,6 +102,7 @@ public class TargetSessionManager : MonoBehaviour
         reactionTimes.Clear();
         targetsHit = 0;
         totalDowntime = 0f;
+        activePlayTime = 0f;
 
         timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
 
@@ -127,6 +132,7 @@ public class TargetSessionManager : MonoBehaviour
         reactionTimes.Clear();
         targetsHit = 0;
         totalDowntime = 0f;
+        activePlayTime = 0f;
 
         timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
     }
