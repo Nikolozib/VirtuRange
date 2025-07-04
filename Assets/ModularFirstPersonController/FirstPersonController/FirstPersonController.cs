@@ -203,7 +203,7 @@ public class FirstPersonController : MonoBehaviour
     private void Update()
     {
         #region Camera
-        if (!PauseMenu.isPaused)
+        if (!PauseMenuManager.IsPaused)
         {
             // Control camera movement
             if (cameraCanMove)

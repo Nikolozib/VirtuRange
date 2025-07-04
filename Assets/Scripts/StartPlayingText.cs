@@ -22,7 +22,7 @@ public class StartPlayingText : MonoBehaviour
         if (System.Array.Exists(allowedScenes, scene => scene == currentScene))
         {
             // If game is paused, hide the start text
-            if (PauseMenu.isPaused)
+            if (PauseMenuManager.IsPaused)
             {
                 if (startText.activeSelf)
                     startText.SetActive(false);

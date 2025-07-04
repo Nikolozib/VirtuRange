@@ -28,15 +28,22 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
-        if (SceneManager.GetActiveScene().name == "StartRoom") return;
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (SceneManager.GetActiveScene().name == "StartRoom")
         {
-            SetWeapon(arWeapon, pistolWeapon);
+            arWeapon.SetActive(false);
+            pistolWeapon.SetActive(false);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (SceneManager.GetActiveScene().name == "CloseRange" || SceneManager.GetActiveScene().name == "MidRange" || SceneManager.GetActiveScene().name == "AdvancedRange")
         {
-            SetWeapon(pistolWeapon, arWeapon);
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                SetWeapon(arWeapon, pistolWeapon);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                SetWeapon(pistolWeapon, arWeapon);
+            }
         }
     }
 

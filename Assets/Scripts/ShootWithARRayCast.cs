@@ -35,7 +35,7 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
 
     void Update()
     {
-        if (!PauseMenu.isPaused && gameObject.activeInHierarchy && SceneManager.GetActiveScene().name != "StartRoom")
+        if (!PauseMenuManager.IsPaused && gameObject.activeInHierarchy && SceneManager.GetActiveScene().name != "StartRoom")
         {
             if (isReloading) return;
 

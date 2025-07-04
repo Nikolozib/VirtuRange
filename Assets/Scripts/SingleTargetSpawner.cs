@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SingleTargetSpawner : MonoBehaviour
 {
@@ -12,25 +13,51 @@ public class SingleTargetSpawner : MonoBehaviour
     private GameObject currentTarget;
     private TargetSessionManager sessionManager;
 
+    void Awake()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     void Start()
     {
+        FindManager();
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        hasStarted = false;
+        currentTarget = null;
+        FindManager();  // find again on scene reload
+    }
+
+    void FindManager()
+    {
         sessionManager = FindObjectOfType<TargetSessionManager>();
+        if (sessionManager == null)
+            Debug.LogWarning("TargetSessionManager not found in scene.");
     }
 
     void Update()
     {
         if (!hasStarted && Input.GetKeyDown(KeyCode.P))
         {
-            hasStarted = true;
-            sessionManager?.StartSession();
-            SpawnTarget();
+            if (sessionManager != null)
+            {
+                hasStarted = true;
+                sessionManager.StartSession();
+                SpawnTarget();
+            }
         }
     }
 
     public void SpawnTarget()
     {
         if (sessionManager == null || !sessionManager.IsSessionActive()) return;
-
         if (targetPrefab == null)
         {
             Debug.LogError("Target prefab not assigned!");
@@ -58,7 +85,7 @@ public class SingleTargetSpawner : MonoBehaviour
             ts.spawner = this;
         }
 
-        sessionManager?.RegisterTargetSpawned(); // <-- Register respawn time
+        sessionManager?.RegisterTargetSpawned();
     }
 
     public void NotifyTargetHit()

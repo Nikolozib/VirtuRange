@@ -10,7 +10,7 @@ public class CursorLocker : MonoBehaviour
 
     public void Update()
     {
-        if (PauseMenu.isPaused)
+        if (PauseMenuManager.IsPaused)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

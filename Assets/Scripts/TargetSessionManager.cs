@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections.Generic;
 
 public class TargetSessionManager : MonoBehaviour
 {
     public float sessionDuration = 60f;
+
     public TMP_Text timerText;
     public TMP_Text resultText;
     public TMP_Text recordText;
@@ -16,16 +18,26 @@ public class TargetSessionManager : MonoBehaviour
     private float totalDowntime = 0f;
     private float activePlayTime = 0f;
 
-    private void Start()
+    private void Awake()
     {
-        timerText.text = "Time: " + Mathf.CeilToInt(sessionDuration).ToString();
-        resultText.text = "";
-
-        if (PlayerPrefs.HasKey("BestAvgReaction"))
+        TargetSessionManager[] managers = FindObjectsOfType<TargetSessionManager>();
+        if (managers.Length > 1)
         {
-            float best = PlayerPrefs.GetFloat("BestAvgReaction");
-            recordText.text = "Record: " + best.ToString("F3") + "s";
+            Destroy(gameObject);
+            return;
         }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Update()
@@ -39,11 +51,13 @@ public class TargetSessionManager : MonoBehaviour
             return;
         }
 
-        if (!PauseMenu.isPaused)
+        if (!PauseMenuManager.IsPaused)
         {
             timer -= Time.deltaTime;
             activePlayTime += Time.deltaTime;
-            timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+
+            if (timerText != null)
+                timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
         }
 
         if (timer <= 0f)
@@ -64,7 +78,7 @@ public class TargetSessionManager : MonoBehaviour
     {
         if (!sessionActive) return;
 
-        totalDowntime += Random.Range(1f, 3f); // average estimated downtime
+        totalDowntime += Random.Range(1f, 3f);
     }
 
     private void EndSession()
@@ -80,14 +94,17 @@ public class TargetSessionManager : MonoBehaviour
         float netActiveTime = activePlayTime - totalDowntime;
         float avgReaction = (targetsHit > 0) ? Mathf.Round((netActiveTime / targetsHit) * 1000f) / 1000f : 0f;
 
-        resultText.text = $"Hits: {targetsHit}\nAvg Reaction: {avgReaction}s\nPress E to Restart";
+        if (resultText != null)
+            resultText.text = $"Hits: {targetsHit}\nAvg Reaction: {avgReaction}s\nPress E to Restart";
 
         float best = PlayerPrefs.GetFloat("BestAvgReaction", float.MaxValue);
         if (avgReaction > 0f && avgReaction < best)
         {
             PlayerPrefs.SetFloat("BestAvgReaction", avgReaction);
             PlayerPrefs.Save();
-            recordText.text = "Record: " + avgReaction.ToString("F3") + "s";
+
+            if (recordText != null)
+                recordText.text = "Record: " + avgReaction.ToString("F3") + "s";
         }
 
         Debug.Log("Session ended.");
@@ -97,14 +114,16 @@ public class TargetSessionManager : MonoBehaviour
     {
         timer = sessionDuration;
         sessionActive = true;
-        resultText.text = "";
-
         reactionTimes.Clear();
         targetsHit = 0;
         totalDowntime = 0f;
         activePlayTime = 0f;
 
-        timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+        if (resultText != null)
+            resultText.text = "";
+
+        if (timerText != null)
+            timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
 
         TargetSpawn[] allTargets = FindObjectsOfType<TargetSpawn>();
         foreach (var target in allTargets)
@@ -127,18 +146,53 @@ public class TargetSessionManager : MonoBehaviour
     {
         timer = sessionDuration;
         sessionActive = true;
-        resultText.text = "";
-
         reactionTimes.Clear();
         targetsHit = 0;
         totalDowntime = 0f;
         activePlayTime = 0f;
 
-        timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+        if (resultText != null)
+            resultText.text = "";
+
+        if (timerText != null)
+            timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
     }
 
     public bool IsSessionActive()
     {
         return sessionActive;
+    }
+
+    public void RefreshUIReferences(TMP_Text timer, TMP_Text result, TMP_Text record)
+    {
+        timerText = timer;
+        resultText = result;
+        recordText = record;
+
+        timerText.text = "Time: " + Mathf.CeilToInt(sessionDuration).ToString();
+        resultText.text = "";
+
+        float best = PlayerPrefs.GetFloat("BestAvgReaction", float.MaxValue);
+        if (best != float.MaxValue)
+            recordText.text = "Record: " + best.ToString("F3") + "s";
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        TMP_Text newTimer = GameObject.Find("TimerText")?.GetComponent<TMP_Text>();
+        TMP_Text newResult = GameObject.Find("ResultText")?.GetComponent<TMP_Text>();
+        TMP_Text newRecord = GameObject.Find("RecordText")?.GetComponent<TMP_Text>();
+
+        if (newTimer && newResult && newRecord)
+            RefreshUIReferences(newTimer, newResult, newRecord);
+
+        sessionActive = false;
+        timer = sessionDuration;
+
+        if (timerText != null)
+            timerText.text = "Time: " + Mathf.CeilToInt(timer).ToString();
+
+        if (resultText != null)
+            resultText.text = "";
     }
 }
