@@ -167,6 +167,17 @@ MonoBehaviour:
   resumeButton: {fileID: 0}
   mainMenuButton: {fileID: 0}
   quitButton: {fileID: 0}
+--- !u!114 &522718945 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6484276148226496283, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+  m_PrefabInstance: {fileID: 599778202}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &591609042
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,6 +891,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1063132606 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4432649291931649881, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+  m_PrefabInstance: {fileID: 599778202}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1154888815
 GameObject:
   m_ObjectHideFlags: 0
@@ -891,6 +913,7 @@ GameObject:
   - component: {fileID: 1154888819}
   - component: {fileID: 1154888817}
   - component: {fileID: 1154888816}
+  - component: {fileID: 1154888820}
   m_Layer: 0
   m_Name: GameManagerStart
   m_TagString: Untagged
@@ -937,6 +960,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1154888820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1154888815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9e33483d0c450743bd82a428ce4a9e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sessionDuration: 60
+  timerText: {fileID: 1063132606}
+  resultText: {fileID: 522718945}
+  recordText: {fileID: 1882112544}
 --- !u!1 &1268828823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1493,6 +1532,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 864412252}
+--- !u!114 &1882112544 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5233488978308666140, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+  m_PrefabInstance: {fileID: 599778202}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2901458960784155443
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -44,7 +44,7 @@ public class TargetSpawn : MonoBehaviour
     {
         float x = Random.Range(minBounds.x, maxBounds.x);
         float y = Random.Range(minBounds.y, maxBounds.y);
-        float z = Random.Range(minBounds.z, maxBounds.z);
+        float z = minBounds.z; // always fixed z per scene
         targetPosition = new Vector3(x, y, z);
     }
 
@@ -60,27 +60,6 @@ public class TargetSpawn : MonoBehaviour
 
         if (spawner != null)
             spawner.NotifyTargetHit();
-    }
-
-    public void Respawn()
-    {
-        if (sessionManager == null || !sessionManager.IsSessionActive()) return;
-
-        string scene = SceneManager.GetActiveScene().name;
-        float zPos = scene == "CloseRange" ? 15f : 30f;
-
-        Vector3 spawnPos = new Vector3(
-            Random.Range(minBounds.x, maxBounds.x),
-            Random.Range(minBounds.y, maxBounds.y),
-            zPos
-        );
-
-        transform.position = spawnPos;
-        spawnTime = Time.time;
-        allowSpawning = true;
-        gameObject.SetActive(true);
-
-        PickNewTargetPosition();
     }
 
     public void StopSpawning()

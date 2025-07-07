@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class SingleTargetSpawner : MonoBehaviour
 {
+    public static SingleTargetSpawner Instance;
+
     public GameObject targetPrefab;
     public Vector3 minBounds = new Vector3(-5f, 1f, 30f);
     public Vector3 maxBounds = new Vector3(5f, 3f, 30f);
@@ -15,6 +17,15 @@ public class SingleTargetSpawner : MonoBehaviour
 
     void Awake()
     {
+        // Singleton protection
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // Optional if you want to persist it
+
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -25,14 +36,24 @@ public class SingleTargetSpawner : MonoBehaviour
 
     void Start()
     {
+        CancelInvoke();
+        SetZPerScene();
         FindManager();
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        CancelInvoke();
         hasStarted = false;
-        currentTarget = null;
-        FindManager();  // find again on scene reload
+
+        if (currentTarget != null)
+        {
+            Destroy(currentTarget);
+            currentTarget = null;
+        }
+
+        SetZPerScene();
+        FindManager();
     }
 
     void FindManager()
@@ -55,6 +76,14 @@ public class SingleTargetSpawner : MonoBehaviour
         }
     }
 
+    void SetZPerScene()
+    {
+        string scene = SceneManager.GetActiveScene().name;
+        float z = scene == "CloseRange" ? 15f : 30f;
+        minBounds.z = z;
+        maxBounds.z = z;
+    }
+
     public void SpawnTarget()
     {
         if (sessionManager == null || !sessionManager.IsSessionActive()) return;
@@ -64,8 +93,12 @@ public class SingleTargetSpawner : MonoBehaviour
             return;
         }
 
+        // Always destroy previous before new
         if (currentTarget != null)
+        {
             Destroy(currentTarget);
+            currentTarget = null;
+        }
 
         Vector3 spawnPosition = new Vector3(
             Random.Range(minBounds.x, maxBounds.x),
@@ -92,12 +125,13 @@ public class SingleTargetSpawner : MonoBehaviour
     {
         if (sessionManager == null || !sessionManager.IsSessionActive()) return;
 
-        float delay = Random.Range(minRespawnTime, maxRespawnTime);
-        Invoke(nameof(SpawnTarget), delay);
+        CancelInvoke(); // Stop stacked spawns
+        Invoke(nameof(SpawnTarget), Random.Range(minRespawnTime, maxRespawnTime));
     }
 
     public void ResetSpawner()
     {
+        CancelInvoke();
         hasStarted = true;
 
         if (currentTarget != null)

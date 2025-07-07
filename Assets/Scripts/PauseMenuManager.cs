@@ -13,6 +13,8 @@ public class PauseMenuManager : MonoBehaviour
 
     private static PauseMenuManager instance;
 
+    private readonly string[] scenesWherePauseIsDisabled = { "MainMenu", "DifficultyChooser" };
+
     void Awake()
     {
         // Singleton pattern
@@ -24,12 +26,16 @@ public class PauseMenuManager : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
-
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Update()
     {
+        // ❌ Don't allow pause in specific scenes
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (System.Array.Exists(scenesWherePauseIsDisabled, scene => scene == currentScene))
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (IsPaused)

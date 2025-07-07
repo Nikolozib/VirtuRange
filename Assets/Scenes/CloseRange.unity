@@ -1017,6 +1017,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 49661099660018079, guid: 6eabdf768c98f37489b08addef29710c, type: 3}
+      propertyPath: targetPrefab
+      value: 
+      objectReference: {fileID: 5536975408487307233, guid: cb5cb1f1be375db4583e2f86d9817fe3, type: 3}
     - target: {fileID: 3323925048450748676, guid: 6eabdf768c98f37489b08addef29710c, type: 3}
       propertyPath: timerText
       value: 
@@ -1090,7 +1094,8 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 5100134405683458332, guid: 6eabdf768c98f37489b08addef29710c, type: 3}
+    - {fileID: 0}
+    - {fileID: 3323925048450748676, guid: 6eabdf768c98f37489b08addef29710c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
