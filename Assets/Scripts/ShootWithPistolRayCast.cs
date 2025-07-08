@@ -11,6 +11,8 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     public LayerMask hitMask;
     public GameObject bulletPrefab;
     public float bulletSpeed = 200f;
+    public ParticleSystem muzzleFlash;
+
 
     private int currentAmmo;
     private bool ableToShoot = true;
@@ -26,10 +28,12 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         ableToShoot = true;
         isReloading = false;
         WeaponUIManager.instance?.UpdateUI(this);
+        muzzleFlash?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
     private void OnDisable()
     {
         WeaponUIManager.instance?.HideAmmo();
+        muzzleFlash?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
 
@@ -61,6 +65,7 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     {
         ableToShoot = false;
         FireBullet();
+        muzzleFlash?.Play();
         ShootRaycast();
         currentAmmo--;
         WeaponUIManager.instance?.UpdateUI(this);
