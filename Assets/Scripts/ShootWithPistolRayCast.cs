@@ -7,11 +7,14 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     public float shootDistance = 35f;
     public float shootDelay = 0.7f;
     public int maxAmmo = 10;
-    public float reloadTime = 3f;
+    public float reloadTime = 1.7f;
     public LayerMask hitMask;
     public GameObject bulletPrefab;
     public float bulletSpeed = 200f;
     public ParticleSystem muzzleFlash;
+    public ParticleSystem explosionEffect;
+    public AudioSource shootSound;
+    public AudioSource reloadSound;
 
 
     private int currentAmmo;
@@ -39,7 +42,7 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
 
     void Update()
     {
-        if (!PauseMenuManager.IsPaused && gameObject.activeInHierarchy && SceneManager.GetActiveScene().name != "StartRoom")
+        if (!PauseMenuManager.IsPaused && gameObject.activeInHierarchy && SceneManager.GetActiveScene().name != "StartRoom" && SceneManager.GetActiveScene().name != "MainMenu" && SceneManager.GetActiveScene().name != "DifficultyChooser")
         {
             if (isReloading) return;
 
@@ -66,6 +69,10 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         ableToShoot = false;
         FireBullet();
         muzzleFlash?.Play();
+        if (shootSound != null)
+        {
+            AudioSource.PlayClipAtPoint(shootSound.clip, Camera.main.transform.position);
+        }
         ShootRaycast();
         currentAmmo--;
         WeaponUIManager.instance?.UpdateUI(this);
@@ -77,6 +84,10 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     {
         isReloading = true;
         WeaponUIManager.instance?.ShowReloading();
+        if (reloadSound != null)
+        {
+            AudioSource.PlayClipAtPoint(reloadSound.clip, Camera.main.transform.position);
+        }
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
@@ -90,7 +101,19 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, shootDistance, hitMask))
         {
-            hit.collider.GetComponent<TargetSpawn>()?.Hit();
+            TargetSpawn target = hit.collider.GetComponent<TargetSpawn>();
+            if (target != null)
+            {
+                target.Hit();
+
+                if (explosionEffect != null)
+                {
+                    explosionEffect.transform.position = hit.point;
+                    explosionEffect.transform.rotation = Quaternion.LookRotation(hit.normal);
+                    ParticleSystem explosion = Instantiate(explosionEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                    Destroy(explosion.gameObject, explosion.main.duration);
+                }
+            }
         }
     }
 
