@@ -774,8 +774,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Press P to start the Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b4921602e72a57b488355c3c8bd8ef02, type: 2}
+  m_sharedMaterial: {fileID: 3567921178384701744, guid: b4921602e72a57b488355c3c8bd8ef02, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1508,8 +1508,8 @@ MonoBehaviour:
 
     Go throw portal to continue'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b4921602e72a57b488355c3c8bd8ef02, type: 2}
+  m_sharedMaterial: {fileID: 3567921178384701744, guid: b4921602e72a57b488355c3c8bd8ef02, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

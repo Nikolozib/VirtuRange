@@ -13,6 +13,7 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
     public float bulletSpeed = 200f;
     public ParticleSystem muzzleFlash;
     public ParticleSystem explosionEffect;
+    public AudioSource explosionSound; 
     public AudioSource reloadSound;
     public AudioSource shootSound;
 
@@ -115,6 +116,10 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
                     explosionEffect.transform.rotation = Quaternion.LookRotation(hit.normal);
                     ParticleSystem explosion = Instantiate(explosionEffect, hit.point, Quaternion.LookRotation(hit.normal));
                     Destroy(explosion.gameObject, explosion.main.duration);
+                }
+                if (explosionSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(explosionSound.clip, hit.point);
                 }
             }
         }
