@@ -5,13 +5,32 @@ public class MyPlayerController : MonoBehaviour
 {
     private static bool hasMovedToSpawn = false;
 
+    [Header("Footstep Settings")]
+    public AudioClip footstepClip;
+    public float stepInterval = 0.5f;
+    private float stepTimer;
+    private AudioSource footstepSource;
+
+    private CharacterController controller;
+
     void Awake()
     {
         Debug.Log("✅ MyPlayerController Awake called.");
+        EnableCamera();
 
-        gameObject.SetActive(true); // Ensure player is active
+        footstepSource = gameObject.AddComponent<AudioSource>();
+        footstepSource.playOnAwake = false;
+        footstepSource.spatialBlend = 1f;
+        footstepSource.volume = 0.3f;
 
-        EnableCamera(); // Ensure camera is enabled
+        controller = GetComponent<CharacterController>();
+        if (controller == null)
+            Debug.LogWarning("⚠️ CharacterController not found — footstep grounded check will fail.");
+    }
+
+    void Start()
+    {
+        MoveToSpawnPointIfNeeded();
     }
 
     void OnEnable()
@@ -24,14 +43,48 @@ public class MyPlayerController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void Start()
+    void Update()
     {
-        MoveToSpawnPointIfNeeded(); // Try placing player at spawn point
+        if (IsMoving() && IsGrounded())
+        {
+            stepTimer -= Time.deltaTime;
+            if (stepTimer <= 0f)
+            {
+                PlayFootstep();
+                stepTimer = stepInterval;
+            }
+        }
+        else
+        {
+            stepTimer = 0f;
+        }
+    }
+
+    private bool IsMoving()
+    {
+        return Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
+    }
+
+    private bool IsGrounded()
+    {
+        if (controller != null)
+            return controller.isGrounded;
+
+        // Optional: fallback raycast if no CharacterController
+        return Physics.Raycast(transform.position, Vector3.down, 1.1f);
+    }
+
+    private void PlayFootstep()
+    {
+        if (footstepClip != null)
+        {
+            footstepSource.PlayOneShot(footstepClip);
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        hasMovedToSpawn = false; // Reset so player moves again on scene load
+        hasMovedToSpawn = false;
         MoveToSpawnPointIfNeeded();
     }
 
@@ -56,16 +109,29 @@ public class MyPlayerController : MonoBehaviour
 
     private void EnableCamera()
     {
-        Camera cam = GetComponentInChildren<Camera>(true); // even if inactive
+        Camera cam = GetComponentInChildren<Camera>(true);
+
+        // Destroy other AudioListeners to avoid conflict
+        AudioListener[] listeners = FindObjectsOfType<AudioListener>();
+        foreach (AudioListener l in listeners)
+        {
+            if (l.gameObject != cam.gameObject)
+                Destroy(l);
+        }
+
         if (cam != null)
         {
             cam.enabled = true;
             cam.gameObject.SetActive(true);
-            Debug.Log("✅ Camera enabled.");
+
+            if (cam.GetComponent<AudioListener>() == null)
+                cam.gameObject.AddComponent<AudioListener>();
+
+            Debug.Log("✅ Camera enabled with AudioListener.");
         }
         else
         {
-            Debug.LogWarning("⚠️ No camera found under player!");
+            Debug.LogWarning("⚠️ No camera found under player.");
         }
     }
 }

@@ -239,6 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d058f356b1846a448d42db3e3497a1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  footstepClip: {fileID: 8300000, guid: ecef98b3978a2e74a9d321197c9fc98e, type: 3}
+  stepInterval: 0.5
 --- !u!1 &4459864850190357393
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,7 +919,7 @@ Transform:
   m_GameObject: {fileID: 7732553497325296055}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.026, y: 0.04, z: 0.127}
+  m_LocalPosition: {x: -0.026, y: 0.04, z: 0.1172}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5849,6 +5851,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5658682458035192171, guid: 6d376055e016790499f2241e6abdafe2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2423935184059928236}
+    - targetCorrespondingSourceObject: {fileID: 5658682458035192171, guid: 6d376055e016790499f2241e6abdafe2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 524124129023005348}
   m_SourcePrefab: {fileID: 100100000, guid: 6d376055e016790499f2241e6abdafe2, type: 3}
 --- !u!4 &4059823448704210244 stripped
 Transform:
@@ -5887,6 +5892,27 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8966657343907185203, guid: 5048dfd7c08149d499b4e0c6506343f7, type: 3}
   bulletSpeed: 200
   muzzleFlash: {fileID: 5998478236148154664}
+  explosionEffect: {fileID: 7588297287326060732, guid: eb9db1eb2b8794848821f782c97126ae, type: 3}
+  explosionClip: {fileID: 8300000, guid: d4aee29185389894b9cc0d8873904a49, type: 3}
+  reloadClip: {fileID: 8300000, guid: e5198250a6a57408bb36e14bc4a322c4, type: 3}
+  shootClip: {fileID: 8300000, guid: c89d8e793ef1ff24d836326a53a63409, type: 3}
+--- !u!114 &524124129023005348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6346175004008357803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43119eef2925f9f4abf3b92c110e74fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 4459864851310106429}
+  positionOffset: {x: 0.4, y: -0.3, z: 0.6}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  positionSmoothSpeed: 10
+  rotationSmoothSpeed: 10
 --- !u!1001 &2076425316687887077
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5949,6 +5975,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7715624594072536106, guid: 60d18f2ffa7f1ab48b9ff7858e69fd0f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5966291269882377925}
+    - targetCorrespondingSourceObject: {fileID: 7715624594072536106, guid: 60d18f2ffa7f1ab48b9ff7858e69fd0f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4370335902846448611}
   m_SourcePrefab: {fileID: 100100000, guid: 60d18f2ffa7f1ab48b9ff7858e69fd0f, type: 3}
 --- !u!1 &8629906661143297743 stripped
 GameObject:
@@ -5977,6 +6006,27 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8966657343907185203, guid: 5048dfd7c08149d499b4e0c6506343f7, type: 3}
   bulletSpeed: 200
   muzzleFlash: {fileID: 444969149077267078}
+  explosionEffect: {fileID: 7588297287326060732, guid: eb9db1eb2b8794848821f782c97126ae, type: 3}
+  explosionClip: {fileID: 8300000, guid: d4aee29185389894b9cc0d8873904a49, type: 3}
+  shootClip: {fileID: 8300000, guid: b2d159f7e00d44d9bbc2d50a0c4fef59, type: 3}
+  reloadClip: {fileID: 8300000, guid: e5198250a6a57408bb36e14bc4a322c4, type: 3}
+--- !u!114 &4370335902846448611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8629906661143297743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43119eef2925f9f4abf3b92c110e74fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 4459864851310106429}
+  positionOffset: {x: 0.4, y: -0.3, z: 0.6}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  positionSmoothSpeed: 10
+  rotationSmoothSpeed: 10
 --- !u!4 &8853420666237666782 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7353633696395427643, guid: 60d18f2ffa7f1ab48b9ff7858e69fd0f, type: 3}

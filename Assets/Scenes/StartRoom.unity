@@ -1425,26 +1425,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1471188212991333292, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.1172
-      objectReference: {fileID: 0}
-    - target: {fileID: 2423935184059928236, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: shootSound
-      value: 
-      objectReference: {fileID: 6227171573023345795, guid: be7c8437849c4e345b610c9aee647847, type: 3}
-    - target: {fileID: 2423935184059928236, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: reloadSound
-      value: 
-      objectReference: {fileID: 7716572044477279853, guid: 8a4a780f2ed1efd40bd219197e644043, type: 3}
-    - target: {fileID: 2423935184059928236, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: explosionSound
-      value: 
-      objectReference: {fileID: 8703741922683824555, guid: e80a15fa0950cd04d9d10ce269f81aab, type: 3}
-    - target: {fileID: 2423935184059928236, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: explosionEffect
-      value: 
-      objectReference: {fileID: 7588297287326060732, guid: eb9db1eb2b8794848821f782c97126ae, type: 3}
     - target: {fileID: 4459864850019384738, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3
@@ -1489,22 +1469,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPersonController
       objectReference: {fileID: 0}
-    - target: {fileID: 5966291269882377925, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: shootSound
-      value: 
-      objectReference: {fileID: 8490448637832255343, guid: 51170a155d4fcff41bbbefd981e5d9c2, type: 3}
-    - target: {fileID: 5966291269882377925, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: reloadSound
-      value: 
-      objectReference: {fileID: 7716572044477279853, guid: 8a4a780f2ed1efd40bd219197e644043, type: 3}
-    - target: {fileID: 5966291269882377925, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: explosionSound
-      value: 
-      objectReference: {fileID: 8703741922683824555, guid: e80a15fa0950cd04d9d10ce269f81aab, type: 3}
-    - target: {fileID: 5966291269882377925, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      propertyPath: explosionEffect
-      value: 
-      objectReference: {fileID: 7588297287326060732, guid: eb9db1eb2b8794848821f782c97126ae, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

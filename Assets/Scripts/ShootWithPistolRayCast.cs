@@ -13,18 +13,25 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     public float bulletSpeed = 200f;
     public ParticleSystem muzzleFlash;
     public ParticleSystem explosionEffect;
-    public AudioSource explosionSound;
-    public AudioSource shootSound;
-    public AudioSource reloadSound;
-
+    public AudioClip explosionClip;
+    public AudioClip shootClip;
+    public AudioClip reloadClip;
 
     private int currentAmmo;
     private bool ableToShoot = true;
     private bool isReloading = false;
 
+    private AudioSource oneShotAudioSource;
+
     private void Awake()
     {
         currentAmmo = maxAmmo;
+
+        oneShotAudioSource = gameObject.AddComponent<AudioSource>();
+        oneShotAudioSource.playOnAwake = false;
+        oneShotAudioSource.spatialBlend = 1f;
+        oneShotAudioSource.volume = 0.7f;
+        oneShotAudioSource.hideFlags = HideFlags.HideInInspector;
     }
 
     private void OnEnable()
@@ -34,12 +41,12 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         WeaponUIManager.instance?.UpdateUI(this);
         muzzleFlash?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
+
     private void OnDisable()
     {
         WeaponUIManager.instance?.HideAmmo();
         muzzleFlash?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
-
 
     void Update()
     {
@@ -70,9 +77,9 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         ableToShoot = false;
         FireBullet();
         muzzleFlash?.Play();
-        if (shootSound != null)
+        if (shootClip != null)
         {
-            AudioSource.PlayClipAtPoint(shootSound.clip, Camera.main.transform.position);
+            oneShotAudioSource.PlayOneShot(shootClip);
         }
         ShootRaycast();
         currentAmmo--;
@@ -85,9 +92,9 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
     {
         isReloading = true;
         WeaponUIManager.instance?.ShowReloading();
-        if (reloadSound != null)
+        if (reloadClip != null)
         {
-            AudioSource.PlayClipAtPoint(reloadSound.clip, Camera.main.transform.position);
+            oneShotAudioSource.PlayOneShot(reloadClip);
         }
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
@@ -95,7 +102,6 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
         WeaponUIManager.instance?.HideReloading();
         WeaponUIManager.instance?.UpdateUI(this);
     }
-
 
     private void ShootRaycast()
     {
@@ -114,9 +120,9 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
                     ParticleSystem explosion = Instantiate(explosionEffect, hit.point, Quaternion.LookRotation(hit.normal));
                     Destroy(explosion.gameObject, explosion.main.duration);
                 }
-                if (explosionSound != null)
+                if (explosionClip != null)
                 {
-                    AudioSource.PlayClipAtPoint(explosionSound.clip, hit.point);
+                    AudioSource.PlayClipAtPoint(explosionClip, hit.point);
                 }
             }
         }
@@ -133,7 +139,6 @@ public class ShootWithPistolRayCast : MonoBehaviour, IWeapon
             rb.linearVelocity = Camera.main.transform.forward * bulletSpeed;
     }
 
-    // IWeapon interface implementation
     public string GetWeaponName() => "Pistol";
     public int GetCurrentAmmo() => currentAmmo;
     public int GetMaxAmmo() => maxAmmo;

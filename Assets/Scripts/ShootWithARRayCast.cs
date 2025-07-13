@@ -13,17 +13,25 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
     public float bulletSpeed = 200f;
     public ParticleSystem muzzleFlash;
     public ParticleSystem explosionEffect;
-    public AudioSource explosionSound; 
-    public AudioSource reloadSound;
-    public AudioSource shootSound;
+    public AudioClip explosionClip;
+    public AudioClip reloadClip;
+    public AudioClip shootClip;
 
     private int currentAmmo;
     private bool ableToShoot = true;
     private bool isReloading = false;
 
+    private AudioSource oneShotAudioSource;
+
     private void Awake()
     {
         currentAmmo = maxAmmo;
+
+        oneShotAudioSource = gameObject.AddComponent<AudioSource>();
+        oneShotAudioSource.playOnAwake = false;
+        oneShotAudioSource.spatialBlend = 1f;
+        oneShotAudioSource.volume = 1f;
+        oneShotAudioSource.hideFlags = HideFlags.HideInInspector;
     }
 
     private void OnEnable()
@@ -33,9 +41,6 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
         WeaponUIManager.instance?.UpdateUI(this);
         muzzleFlash?.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
-
-
-
 
     private void OnDisable()
     {
@@ -72,9 +77,9 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
         ableToShoot = false;
         FireBullet();
         muzzleFlash?.Play();
-        if (shootSound != null)
+        if (shootClip != null)
         {
-            AudioSource.PlayClipAtPoint(shootSound.clip, Camera.main.transform.position);
+            oneShotAudioSource.PlayOneShot(shootClip);
         }
         ShootRaycast();
         currentAmmo--;
@@ -86,19 +91,17 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
     private IEnumerator Reload()
     {
         isReloading = true;
-        WeaponUIManager.instance?.ShowReloading(); // <-- Show reload message
-        if (reloadSound != null)
+        WeaponUIManager.instance?.ShowReloading();
+        if (reloadClip != null)
         {
-            AudioSource.PlayClipAtPoint(reloadSound.clip, Camera.main.transform.position);
+            oneShotAudioSource.PlayOneShot(reloadClip);
         }
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         isReloading = false;
-        WeaponUIManager.instance?.HideReloading(); // <-- Hide reload message
-        WeaponUIManager.instance?.UpdateUI(this);  // <-- Update ammo
+        WeaponUIManager.instance?.HideReloading();
+        WeaponUIManager.instance?.UpdateUI(this);
     }
-
-
 
     private void ShootRaycast()
     {
@@ -117,14 +120,13 @@ public class ShootWithARRayCast : MonoBehaviour, IWeapon
                     ParticleSystem explosion = Instantiate(explosionEffect, hit.point, Quaternion.LookRotation(hit.normal));
                     Destroy(explosion.gameObject, explosion.main.duration);
                 }
-                if (explosionSound != null)
+                if (explosionClip != null)
                 {
-                    AudioSource.PlayClipAtPoint(explosionSound.clip, hit.point);
+                    AudioSource.PlayClipAtPoint(explosionClip, hit.point);
                 }
             }
         }
     }
-
 
     private void FireBullet()
     {
