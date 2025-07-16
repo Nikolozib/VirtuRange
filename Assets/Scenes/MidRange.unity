@@ -882,7 +882,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 9239b2484cf7e0047ae2c2f52894812d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -921,8 +921,8 @@ Transform:
   m_GameObject: {fileID: 1591313710}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -4.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 2.007, z: -4.5}
+  m_LocalScale: {x: 3, y: 4, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -956,7 +956,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d058f356b1846a448d42db3e3497a1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  footstepClip: {fileID: 0}
+  stepInterval: 0.5
 --- !u!4 &1950063214
 Transform:
   m_ObjectHideFlags: 0

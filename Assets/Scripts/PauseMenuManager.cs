@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class PauseMenuManager : MonoBehaviour
 {
     public GameObject pauseMenuUI;
+    public GameObject crosshairPanel;
     public Button resumeButton;
     public Button mainMenuButton;
     public Button quitButton;
@@ -31,7 +32,6 @@ public class PauseMenuManager : MonoBehaviour
 
     void Update()
     {
-        // ❌ Don't allow pause in specific scenes
         string currentScene = SceneManager.GetActiveScene().name;
         if (System.Array.Exists(scenesWherePauseIsDisabled, scene => scene == currentScene))
             return;
@@ -51,8 +51,8 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (pauseMenuUI != null)
-            pauseMenuUI.SetActive(true);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
+        if (crosshairPanel != null) crosshairPanel.SetActive(false);
 
         IsPaused = true;
     }
@@ -63,8 +63,8 @@ public class PauseMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (pauseMenuUI != null)
-            pauseMenuUI.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (crosshairPanel != null) crosshairPanel.SetActive(true);
 
         IsPaused = false;
     }
@@ -90,6 +90,7 @@ public class PauseMenuManager : MonoBehaviour
     private void RehookUIReferences()
     {
         pauseMenuUI = GameObject.Find("PausePanel");
+        crosshairPanel = GameObject.Find("CrossairPanel");
 
         if (pauseMenuUI == null)
         {
@@ -120,5 +121,7 @@ public class PauseMenuManager : MonoBehaviour
         }
 
         pauseMenuUI.SetActive(false);
+        if (crosshairPanel != null)
+            crosshairPanel.SetActive(true);
     }
 }

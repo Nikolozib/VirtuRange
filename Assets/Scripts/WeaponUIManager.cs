@@ -7,7 +7,8 @@ public class WeaponUIManager : MonoBehaviour
 
     public TMP_Text weaponNameText;
     public TMP_Text ammoText;
-    public TMP_Text reloadText; // <-- Add this in the inspector
+    public TMP_Text reloadText;
+    
 
     private void Awake()
     {
