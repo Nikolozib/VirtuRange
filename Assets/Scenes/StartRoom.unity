@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: aa5286c62969d804098ebd704cd4a0cf, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -316,6 +316,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 6488093849252457344, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6488093849252457344, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6488093849252457344, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6488093849252457344, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 7488002708294977514, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -394,10 +410,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7488002708294977514, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8715797680842380980, guid: b35c0cf3fcc71d040874e95eba7a2d09, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

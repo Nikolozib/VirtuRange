@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,8 +14,19 @@ public class MyPlayerController : MonoBehaviour
 
     private CharacterController controller;
 
+    private static MyPlayerController Instance;
+
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // persist player across scenes
+
         Debug.Log("✅ MyPlayerController Awake called.");
         EnableCamera();
 
@@ -30,7 +42,7 @@ public class MyPlayerController : MonoBehaviour
 
     void Start()
     {
-        MoveToSpawnPointIfNeeded();
+        StartCoroutine(MoveToSpawnPoint());
     }
 
     void OnEnable()
@@ -44,6 +56,39 @@ public class MyPlayerController : MonoBehaviour
     }
 
     void Update()
+    {
+        HandleFootsteps();
+
+        if (footstepSource == null)
+        {
+            Debug.LogWarning("❌ footstepSource is missing! Recreating...");
+            footstepSource = gameObject.AddComponent<AudioSource>();
+            footstepSource.clip = footstepClip;
+            footstepSource.playOnAwake = false;
+            footstepSource.spatialBlend = 1f;
+            footstepSource.volume = 0.3f;
+        }
+
+        if (IsMoving() && IsGrounded())
+        {
+            stepTimer -= Time.deltaTime;
+            if (stepTimer <= 0f)
+            {
+                PlayFootstep();
+                stepTimer = stepInterval;
+            }
+        }
+        else
+        {
+            stepTimer = 0f;
+        }
+        if (transform.position.y < -5f && !isRespawning)
+        {
+            StartCoroutine(RespawnPlayer());
+        }
+    }
+
+    private void HandleFootsteps()
     {
         if (IsMoving() && IsGrounded())
         {
@@ -70,7 +115,6 @@ public class MyPlayerController : MonoBehaviour
         if (controller != null)
             return controller.isGrounded;
 
-        // Optional: fallback raycast if no CharacterController
         return Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
 
@@ -85,37 +129,82 @@ public class MyPlayerController : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         hasMovedToSpawn = false;
-        MoveToSpawnPointIfNeeded();
+        StartCoroutine(MoveToSpawnPoint());
+        EnableCamera();
     }
 
-    private void MoveToSpawnPointIfNeeded()
-    {
-        if (hasMovedToSpawn) return;
+    private static bool isRespawning = false;
 
-        GameObject spawn = GameObject.FindGameObjectWithTag("Respawn");
+    private IEnumerator MoveToSpawnPoint()
+    {
+        if (hasMovedToSpawn) yield break;
+
+        GameObject spawn = null;
+        float timeout = 2f;
+        float timer = 0f;
+
+        // ⏳ Wait for spawn to load in scene
+        while (spawn == null && timer < timeout)
+        {
+            spawn = GameObject.FindGameObjectWithTag("Respawn");
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
         if (spawn != null)
         {
-            transform.position = spawn.transform.position;
-            transform.rotation = spawn.transform.rotation;
-            Debug.Log("✅ Player moved to spawn point: " + spawn.name);
+            yield return null; // Allow one frame to stabilize
+            MoveToPosition(spawn.transform.position, spawn.transform.rotation);
+            hasMovedToSpawn = true;
         }
         else
         {
             Debug.LogWarning("⚠️ No spawn point found with tag 'Respawn'.");
         }
+    }
 
-        hasMovedToSpawn = true;
+    private IEnumerator RespawnPlayer()
+    {
+        isRespawning = true;
+
+        // Wait a frame to avoid physics conflicts
+        yield return new WaitForSeconds(0.1f);
+
+        GameObject spawn = GameObject.FindGameObjectWithTag("Respawn");
+
+        if (spawn != null)
+        {
+            MoveToPosition(spawn.transform.position, spawn.transform.rotation);
+            Debug.Log("🔁 Respawned player.");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ Could not respawn — no object with tag 'Respawn'.");
+        }
+
+        yield return null;
+        isRespawning = false;
+    }
+
+    private void MoveToPosition(Vector3 position, Quaternion rotation)
+    {
+        // Disable controller to teleport cleanly
+        if (controller != null) controller.enabled = false;
+
+        transform.position = position;
+        transform.rotation = rotation;
+
+        if (controller != null) controller.enabled = true;
     }
 
     private void EnableCamera()
     {
         Camera cam = GetComponentInChildren<Camera>(true);
 
-        // Destroy other AudioListeners to avoid conflict
         AudioListener[] listeners = FindObjectsOfType<AudioListener>();
         foreach (AudioListener l in listeners)
         {
-            if (l.gameObject != cam.gameObject)
+            if (l.gameObject != cam?.gameObject)
                 Destroy(l);
         }
 
@@ -127,7 +216,7 @@ public class MyPlayerController : MonoBehaviour
             if (cam.GetComponent<AudioListener>() == null)
                 cam.gameObject.AddComponent<AudioListener>();
 
-            Debug.Log("✅ Camera enabled with AudioListener.");
+            Debug.Log("✅ Camera and AudioListener enabled.");
         }
         else
         {

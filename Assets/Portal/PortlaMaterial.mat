@@ -59,7 +59,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Brightness: -2.4
-    - _Density: 5
+    - _Density: 10
     - _Speed: 0.1
     - _Strength: 20
     m_Colors:

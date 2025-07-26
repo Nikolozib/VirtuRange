@@ -4,7 +4,6 @@ using TMPro;
 public class WeaponUIManager : MonoBehaviour
 {
     public static WeaponUIManager instance;
-
     public TMP_Text weaponNameText;
     public TMP_Text ammoText;
     public TMP_Text reloadText;
@@ -26,7 +25,7 @@ public class WeaponUIManager : MonoBehaviour
 
         weaponNameText.text = weapon.GetWeaponName();
         ammoText.text = $"{weapon.GetCurrentAmmo()} / {weapon.GetMaxAmmo()}";
-        reloadText.text = ""; // Clear reload text
+        reloadText.text = ""; 
     }
 
     public void ShowReloading()

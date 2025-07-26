@@ -44,7 +44,7 @@ public class TargetSpawn : MonoBehaviour
     {
         float x = Random.Range(minBounds.x, maxBounds.x);
         float y = Random.Range(minBounds.y, maxBounds.y);
-        float z = minBounds.z; // always fixed z per scene
+        float z = minBounds.z;
         targetPosition = new Vector3(x, y, z);
     }
 
@@ -77,5 +77,10 @@ public class TargetSpawn : MonoBehaviour
     public void ResetSpawnTime()
     {
         spawnTime = Time.time;
+    }
+
+    void OnMouseDown()
+    {
+        Hit(); // for desktop testing
     }
 }

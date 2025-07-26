@@ -1,2 +1,12 @@
 fileFormatVersion: 2
 guid: 7d058f356b1846a448d42db3e3497a1c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - footstepClip: {fileID: 8300000, guid: ecef98b3978a2e74a9d321197c9fc98e, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
